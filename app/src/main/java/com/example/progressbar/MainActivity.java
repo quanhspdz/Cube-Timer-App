@@ -17,17 +17,20 @@ import android.widget.TextView;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     Button btnStart, btnReset;
-    TextView txtTienTrinh, txtAvg5, txtAvg12, txtBestTime;
+    TextView txtTienTrinh, txtAvg5, txtAvg12, txtBestTime, txtScramble;
     View appView, appViewLand;
     boolean startIsClicked = false, resetIsClicked = false;
     long time = 0, startTime, oldTime = 0;
     ListView listViewTimeHistory;
     ArrayList<Long> arrayTime;
-    ArrayList<String> arrayStrTime;
+    ArrayList<Integer> arrayMoves;
     TimeAdapter adapter;
+    HashMap<Integer, String> moves;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +54,15 @@ public class MainActivity extends AppCompatActivity {
         txtAvg5 = findViewById(R.id.txtAvg5);
         txtAvg12 = findViewById(R.id.txtAvg12);
         txtBestTime = findViewById(R.id.txtBestTime);
+        txtScramble = findViewById(R.id.txtScramble);
 
         arrayTime = new ArrayList<>();
-        arrayStrTime = new ArrayList<>();
+        arrayMoves = new ArrayList<>();
 
         startTime = System.nanoTime();
+
+        assignMovesHasMap();
+        setScrambleText();
 
         //set start button action
         Handler handler = new Handler();
@@ -95,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!startIsClicked) {
                     resetIsClicked = true;
                     if (time != 0) addArrayTime(time);
+                    setScrambleText();
                     reset();
                 }
                 else {
@@ -140,16 +148,16 @@ public class MainActivity extends AppCompatActivity {
         txtTienTrinh.setText(convertToHours(time));
         resetIsClicked = false;
 
-
-
-        long best = getBest(arrayTime);
-        txtBestTime.setText("Best: " + convertToHours(best));
-        if (arrayTime.size() >= 5) {
-            String strAvg5 = convertToHours((long) averageOfLastN(arrayTime, 5));
-            txtAvg5.setText("-Avg5: " + strAvg5);
-            if (arrayTime.size() >= 12) {
-                String strAvg12 = convertToHours((long) averageOfLastN(arrayTime, 12));
-                txtAvg12.setText("Avg12: " + strAvg12);
+        if (arrayTime.size() > 0) {
+            long best = getBest(arrayTime);
+            txtBestTime.setText("Best: " + convertToHours(best));
+            if (arrayTime.size() >= 5) {
+                String strAvg5 = convertToHours((long) averageOfLastN(arrayTime, 5));
+                txtAvg5.setText("-Avg5: " + strAvg5 + "-");
+                if (arrayTime.size() >= 12) {
+                    String strAvg12 = convertToHours((long) averageOfLastN(arrayTime, 12));
+                    txtAvg12.setText("Avg12: " + strAvg12);
+                }
             }
         }
     }
@@ -181,6 +189,56 @@ public class MainActivity extends AppCompatActivity {
                 best = arrayTime.get(i);
         }
         return best;
+    }
+
+    private void setScrambleText() {
+        arrayMoves.removeAll(arrayMoves);
+        Random random = new Random();
+
+        int n = random.nextInt(4) + 18;
+        int move;
+
+        move = random.nextInt(21) + 1;
+        arrayMoves.add(move);
+        String strMove = " ", strMovePrev = " ";
+        for (int i = 1; i < n; i++) {
+            do {
+                move = random.nextInt(21) + 1;
+                strMove = moves.get(move);
+                strMovePrev = moves.get(arrayMoves.get(i - 1));
+            } while ((strMove.charAt(0) == strMovePrev.charAt(0)));
+            arrayMoves.add(move);
+        }
+        String scrambleText = "";
+        for (int i = 0; i < n; i++) {
+            scrambleText += moves.get(arrayMoves.get(i)) + " ";
+        }
+        txtScramble.setText(scrambleText);
+
+    }
+    private void assignMovesHasMap() {
+        moves = new HashMap<>();
+        moves.put(1, "U");
+        moves.put(2, "U2");
+        moves.put(3, "R");
+        moves.put(4, "R2");
+        moves.put(5, "L");
+        moves.put(6, "L2");
+        moves.put(7, "B");
+        moves.put(8, "B2");
+        moves.put(9, "D");
+        moves.put(10, "D2");
+        moves.put(11, "F");
+        moves.put(12, "F2");
+        moves.put(13, "M");
+        moves.put(14, "M2");
+        moves.put(15, "U'");
+        moves.put(16, "R'");
+        moves.put(17, "L'");
+        moves.put(18, "B'");
+        moves.put(19, "D'");
+        moves.put(20, "F'");
+        moves.put(21, "M'");
     }
 }
 

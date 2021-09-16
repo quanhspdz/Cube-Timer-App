@@ -68,20 +68,21 @@
         app:layout_constraintTop_toBottomOf="@+id/txtScramble"
         app:layout_constraintVertical_bias="0.493" />
 
+
     <ListView
         android:id="@+id/listViewHistory"
         android:layout_width="0dp"
-        android:layout_height="250dp"
+        android:layout_height="272dp"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/btnStart"
         app:layout_constraintEnd_toStartOf="@+id/txtTienTrinh"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txtTienTrinh"
-        app:layout_constraintVertical_bias="0.164" />
+        app:layout_constraintVertical_bias="0.631" />
 
     <TextView
         android:id="@+id/txtBestTime"

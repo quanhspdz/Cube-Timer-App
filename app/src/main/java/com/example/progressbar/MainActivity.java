@@ -6,9 +6,11 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -70,14 +72,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (startIsClicked) {
-                    startIsClicked = false;
-                    oldTime = time;
-                    btnStart.setText("Start");
+                    stopTimer();
                 }
                 else {
-                    startTime = System.nanoTime();
-                    startIsClicked = true;
-                    btnStart.setText("Stop");
+                    startTimer();
                 }
                 runLoop(50);
             }
@@ -87,11 +85,7 @@ public class MainActivity extends AppCompatActivity {
         appViewLand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (startIsClicked) {
-                    startIsClicked = false;
-                    oldTime = time;
-                    btnStart.setText("Start");
-                }
+                stopTimer();
             }
         });
 
@@ -106,15 +100,43 @@ public class MainActivity extends AppCompatActivity {
                     reset();
                 }
                 else {
-                    startIsClicked = false;
-                    oldTime = time;
-                    btnStart.setText("Start");
+                    stopTimer();
                 }
             }
         });
 
         adapter = new TimeAdapter(MainActivity.this, R.layout.each_time_item, arrayTime);
         listViewTimeHistory.setAdapter(adapter);
+
+        listViewTimeHistory.setClickable(true);
+
+
+        //stop timer when user touch list of history
+        listViewTimeHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                stopTimer();
+            }
+        });
+    }
+    //function start timer
+    public void startTimer() {
+        if (!startIsClicked) {
+            listViewTimeHistory.setVisibility(View.GONE);
+            startTime = System.nanoTime();
+            startIsClicked = true;
+            btnStart.setText("Stop");
+        }
+    }
+
+    //function stop timer
+    public void stopTimer() {
+        if (startIsClicked) {
+            listViewTimeHistory.setVisibility(View.VISIBLE);
+            startIsClicked = false;
+            oldTime = time;
+            btnStart.setText("Start");
+        }
     }
 
     //function to save the time history (new time will show first)
